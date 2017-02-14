@@ -30,9 +30,8 @@ export default function connectRouter (router, history) {
       // check if the action is one of ours and handle the history as needed
       if (isInternalAction(action)) {
         invokeMatchingMethod(action, history);
-      } else {
-        next(action);
       }
+      next(action);
     }
   }
 }
