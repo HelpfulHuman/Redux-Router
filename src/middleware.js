@@ -1,5 +1,5 @@
 import { noop } from "./utils";
-import { isInternalAction } from "./actions";
+import { isInternalAction, invokeMatchingMethod } from "./actions";
 import Context from "./context";
 import createHistory from "history/createBrowserHistory";
 
@@ -27,11 +27,10 @@ export default function connectRouter (router, history) {
     return next => action => {
       // check if the action is one of ours and handle the history as needed
       if (isInternalAction(action)) {
-        return;
+        invokeMatchingMethod(action, history);
+      } else {
+        next(action);
       }
-
-      // dispatch the action if it's not one of ours
-      next(action);
     }
   }
 }

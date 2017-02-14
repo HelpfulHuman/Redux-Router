@@ -15,6 +15,27 @@ export function isInternalAction ({ type }) {
 }
 
 /**
+ * Invokes the method on the given history object that matches the
+ * action type.
+ *
+ * @param  {Object} action
+ * @param  {History} History
+ */
+export function invokeMatchingMethod (action, history) {
+  switch (action.type) {
+    case PUSH_STATE:
+      history.pushState(action.path, {});
+      break;
+    case REPLACE_STATE:
+      history.replaceState(action.path, {});
+      break;
+    case POP_STATE:
+      history.popState(action.path, {});
+      break;
+  }
+}
+
+/**
  * Trigger a push state in the router.
  */
 export function pushState (path) {
