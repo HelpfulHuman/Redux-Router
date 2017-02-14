@@ -1,0 +1,48 @@
+{
+  "name": "pure-redux-router",
+  "version": "1.0.0",
+  "description": "A routing solution for Redux applications.",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "scripts": {
+    "preversion": "npm test",
+    "version": "npm run build",
+    "postversion": "git push origin master && git push origin master --tags",
+    "clean": "rm -rf dist/",
+    "build": "rollup -c",
+    "watch": "npm run build -- --watch",
+    "test": "mocha",
+    "tdd": "npm run test -- --watch",
+    "prepublish": "npm run clean && npm run build && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helpfulhuman/pure-redux-router.git"
+  },
+  "keywords": [
+    "redux",
+    "router",
+    "routing",
+    "location",
+    "history"
+  ],
+  "author": "Helpful Human <hello@helpfulhuman.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/helpfulhuman/pure-redux-router/issues"
+  },
+  "homepage": "https://github.com/helpfulhuman/pure-redux-router#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "rollup": "^0.41.4",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-commonjs": "^7.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-watch": "^3.2.2",
+    "sinon": "^1.17.7"
+  },
+  "dependencies": {
+    "history": "^4.5.1"
+  }
+}
