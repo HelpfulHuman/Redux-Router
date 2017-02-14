@@ -17,12 +17,14 @@ export default function connectRouter (router, history) {
 
   // return the middleware function for redux
   return function ({ getState, dispatch }) {
-    // TODO hook up the router to start listening
-    // TODO hydrate state on load here
-    history.listen(function (location) {
+    const processLocation = function (location) {
       var ctx = new Context(location, getState());
       router.process(ctx, dispatch);
-    });
+    }
+
+    history.listen(proccessLocation);
+
+    processLocation(window.location);
 
     return next => action => {
       // check if the action is one of ours and handle the history as needed
