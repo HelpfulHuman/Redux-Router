@@ -53,7 +53,9 @@ class Router {
     // location's pathname matches the given path pattern
     this.use(function (ctx, dispatch, next) {
       if ( ! ctx.matchesPath(path)) next();
-      else router.process(ctx, dispatch, next);
+      else router.process(ctx, dispatch, function (err) {
+        if (err) next(err);
+      });
     });
     // return our new sub router
     return router;
