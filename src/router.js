@@ -13,6 +13,19 @@ class Router {
   }
 
   /**
+   * Handle errors on this router.  Catching errors for this route(r) means
+   * that they will not bubble up to any parent router(s).
+   *
+   * @param  {Function} handler
+   * @return {this}
+   */
+  catch (handler) {
+    isType(handler, "function", "Handler");
+    this.errorHandler = handler;
+    return this;
+  }
+
+  /**
    * Adds a new middleware function to the stack.
    *
    * @param  {Function} middleware
@@ -93,8 +106,7 @@ class Router {
       (err) => {
         if (err && this.errorHandler) {
           this.errorHandler(err);
-        }
-        if (callback) {
+        } else if (callback) {
           callback(err);
         }
       }
