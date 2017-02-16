@@ -15,10 +15,8 @@ router
       return "/login";
     }
   })
-  .use(function ({ params }, dispatch) {
-    dispatch(Actions.getTodo(params.todoId));
-    dispatch(Actions.getCommentsFor(params.todoId));
-  });
+  .dispatchWith(Actions.getTodo, ["todoId"])
+  .dispatchWith(Actions.getCommentsFor, ["todoId"]);
 
 router
   .when("/")

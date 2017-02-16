@@ -33,7 +33,13 @@ class Router {
    */
   use (middleware) {
     isType(middleware, "function", "Middleware");
-    this.middleware.push(middleware);
+    this.middleware.push(function (ctx, dispatch, next) {
+      try {
+        middleware(ctx, dispatch, next);
+      } catch (err) {
+        next(err);
+      }
+    });
     return this;
   }
 
@@ -88,6 +94,24 @@ class Router {
     isType(action, "function", "Action");
     return this.use(function (ctx, dispatch, next) {
       dispatch(action(ctx));
+      next();
+    });
+  }
+
+  /**
+   * Merges the query and param objects together, plucks the specified
+   * keys from the new object and then passes them to the given action
+   * creator in the specified order.
+   *
+   * @param  {Function} action
+   * @param  {String[]} keys
+   * @return {this}
+   */
+  dispatchWith (action, keys) {
+    return this.use(function ({ query, params }, dispatch, next) {
+      var newParams = Object.assign({}, query, params);
+      var args = keys.map(k => newParams[k] || null);
+      dispatch(action.apply(null, args));
       next();
     });
   }

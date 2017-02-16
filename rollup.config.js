@@ -2,6 +2,7 @@ import buble from "rollup-plugin-buble";
 
 export default {
   entry: "src/index.js",
+  treeshake: false,
   targets: [
     { dest: 'dist/index.js', format: 'cjs' },
     { dest: 'dist/index.es.js', format: 'es' },
