@@ -14,13 +14,13 @@ export function defaultErrorHandler (err, ctx) {
  * Create a custom context object.
  *
  * @param  {Object} location
- * @param  {Object} state
+ * @param  {Function} getState
  * @param  {Function} dispatch
  * @return {Object}
  */
-export function createReduxContext (location, state, dispatch) {
+export function createReduxContext (location, getState, dispatch) {
   var ctx = createContext(location);
-  return Object.assign(ctx, { state, dispatch });
+  return Object.assign(ctx, { getState, dispatch, state: getState() });
 }
 
 /**

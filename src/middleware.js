@@ -20,7 +20,7 @@ export default function createReduxMiddleware (middleware, errorHandler, aliases
   return function ({ getState, dispatch }) {
 
     const processLocation = function (location) {
-      var ctx = createReduxContext(location, getState(), dispatch);
+      var ctx = createReduxContext(location, getState, dispatch);
       runMiddleware(router.middleware, function (err, redirect) {
         if (err) {
           router.errorHandler(err);
