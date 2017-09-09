@@ -1,7 +1,7 @@
-import { compose, onPathMatch, assertType } from "@helpfulhuman/route-kit";
+import pathToRegex from "path-to-regexp";
 import { defaultErrorHandler } from "./utils";
 import createReduxMiddleware from "./middleware";
-import pathToRegex from "path-to-regexp";
+import { compose, onPathMatch, assertType } from "@helpfulhuman/router-kit";
 
 export default class Router {
 
@@ -91,7 +91,12 @@ export default class Router {
    * @param {History} history
    */
   middleware (history) {
-    return createReduxMiddleware(this.middleware, this.errorHandler, this.aliases, history);
+    return createReduxMiddleware(
+      this.middleware,
+      this.errorHandler,
+      this.aliases,
+      history
+    );
   }
 
 }

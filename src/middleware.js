@@ -1,5 +1,5 @@
 import { assertHistoryType } from "./utils";
-import { createContext } from "@helpfulhuman/route-kit";
+import { createContext } from "@helpfulhuman/router-kit";
 import createHistory from "history/createBrowserHistory";
 import { isInternalAction, invokeMatchingMethod, replaceState } from "./actions";
 
@@ -12,7 +12,8 @@ import { isInternalAction, invokeMatchingMethod, replaceState } from "./actions"
  * @return {Object}
  */
 function createReduxContext (location, state, dispatch) {
-  return Object.assign(createContext(location), { state, dispatch });
+  var ctx = createContext(location);
+  return Object.assign(ctx, { state, dispatch });
 }
 
 /**
@@ -38,7 +39,7 @@ export default function createReduxMiddleware (middleware, errorHandler, aliases
         if (err) {
           router.errorHandler(err);
         } else if (redirect) {
-          dispatch(replaceState());
+          dispatch(replaceState(redirect));
         }
       });
     }
