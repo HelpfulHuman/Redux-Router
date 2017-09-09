@@ -1,6 +1,6 @@
 import createHistory from "history/createBrowserHistory";
 import { assertHistoryType, createReduxContext } from "./utils";
-import { isInternalAction, invokeMatchingMethod, replaceState } from "./actions";
+import { isInternalAction, invokeRouteChange, replaceState } from "./actions";
 
 /**
  * Returns a new middleware function for Redux using the given parameters.
@@ -35,10 +35,7 @@ export default function createReduxMiddleware (middleware, errorHandler, aliases
     processLocation(window.location);
 
     return next => action => {
-      // check if the action is one of ours and handle the history as needed
-      if (isInternalAction(action)) {
-        invokeMatchingMethod(action, history);
-      }
+      invokeRouteChange(action, history);
       next(action);
     }
   }
