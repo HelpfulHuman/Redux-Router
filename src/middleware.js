@@ -1,6 +1,7 @@
 import createHistory from "history/createBrowserHistory";
 import { assertHistoryType, createReduxContext } from "./utils";
 import { isInternalAction, invokeRouteChange, replaceState } from "./actions";
+import { compose } from "@helpfulhuman/router-kit";
 
 /**
  * Returns a new middleware function for Redux using the given parameters.
@@ -16,14 +17,16 @@ export default function createReduxMiddleware (middleware, errorHandler, aliases
   if ( ! history) history = createHistory();
   // make sure we have a valid history object
   assertHistoryType(history);
+  // cache a composed middleware function
+  const runMiddleware = compose(middleware);
   // return the middleware function for redux
   return function ({ getState, dispatch }) {
 
     const processLocation = function (location) {
       var ctx = createReduxContext(location, getState, dispatch);
-      runMiddleware(router.middleware, function (err, redirect) {
+      runMiddleware(ctx, function (err, redirect) {
         if (err) {
-          router.errorHandler(err);
+          errorHandler(err);
         } else if (redirect) {
           dispatch(replaceState(redirect));
         }
