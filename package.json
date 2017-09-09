@@ -12,7 +12,7 @@
     "build": "rollup -c",
     "watch": "npm run build -- --watch",
     "test": "mocha",
-    "tdd": "npm run test -- --watch",
+    "tdd": "npm run watch | npm run test -- --watch",
     "prepublish": "npm run clean && npm run build && npm run test"
   },
   "repository": {
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/helpfulhuman/pure-redux-router#readme",
   "devDependencies": {
-    "@helpfulhuman/router-kit": "^1.0.0",
+    "@helpfulhuman/router-kit": "^1.0.3",
     "chai": "^4.1.2",
     "del-cli": "^1.1.0",
     "mocha": "^3.5.0",
@@ -45,6 +45,7 @@
     "sinon-chai": "^2.13.0"
   },
   "dependencies": {
+    "arr-flatten": "^1.1.0",
     "history": "^4.5.1",
     "path-to-regexp": "^2.0.0"
   }

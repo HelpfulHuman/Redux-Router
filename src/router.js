@@ -1,5 +1,6 @@
+import flatten from "arr-flatten";
 import pathToRegex from "path-to-regexp";
-import { defaultErrorHandler, flatten } from "./utils";
+import { defaultErrorHandler } from "./utils";
 import createReduxMiddleware from "./middleware";
 import { compose, onPathMatch, assertType } from "@helpfulhuman/router-kit";
 
@@ -36,9 +37,9 @@ export default class Router {
    */
   use (path, ...middlewares) {
     if (typeof path === "function") {
-      this.middleware = this.middleware.concat(path, flatten(middlewares));
+      this.middleware = flatten([this.middleware, path, middlewares]);
     } else {
-      this.middleware.push(onPathMatch(path, compose(flatten(middlewares)), false));
+      this.middleware.push(onPathMatch(path, compose(middlewares), false));
     }
     return this;
   }
@@ -54,8 +55,7 @@ export default class Router {
     if (middlewares.length === 0) {
       throw new Error("Bad argument: At least one middleware must be given to router.exact()");
     }
-    middlewares = (middlewares.length > 1 ? compose(middlewares) : middlewares[0]);
-    this.middleware.push(onPathMatch(path, middlewares, true));
+    this.middleware.push(onPathMatch(path, compose(middlewares), true));
     return this;
   }
 
@@ -67,10 +67,10 @@ export default class Router {
    * @return {Router}
    */
   dispatch (path, action) {
-    this.middleware.push(exact(path, function (ctx) {
+    return this.exact(path, function (ctx, next) {
       ctx.dispatch(action(ctx));
-    }));
-    return this;
+      next();
+    });
   }
 
   /**

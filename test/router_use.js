@@ -11,11 +11,14 @@ describe("Router.use()", function () {
     router = new Router();
   });
 
-  it("adds middleware without a path to the top level list of middleware", function () {
+  it("adds middleware to the top level array when no path is provided", function () {
     router.use(noop, noop, [noop, noop], noop);
     assert.lengthOf(router.middleware, 5);
   });
 
-  it("adds middleware with a path as a composed group of nested middleware");
+  it("adds a single new middleware as a composed group of nested middleware when a path is provided", function () {
+    router.use("/", noop, noop);
+    assert.lengthOf(router.middleware, 1);
+  });
 
 });

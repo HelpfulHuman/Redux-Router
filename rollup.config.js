@@ -8,6 +8,7 @@ export default {
     { file: 'dist/index.es.js', format: 'es' },
   ],
   external: [
+    "arr-flatten",
     "history/createBrowserHistory",
     "path-to-regexp",
   ],
