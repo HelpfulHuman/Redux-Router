@@ -40,7 +40,7 @@ export default function createReduxMiddleware (middleware, errorHandler, aliases
     processLocation(window.location);
 
     return (next) => (action) => {
-      invokeRouteChange(action, history);
+      invokeRouteChange(aliases, action, history);
       next(action);
     }
   }

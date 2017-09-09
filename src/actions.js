@@ -31,10 +31,10 @@ export function getActualPath (aliases, { path, params }) {
 export function invokeRouteChange (aliases, action, history) {
   switch (action.type) {
     case PUSH_STATE:
-      history.push(getActualPath(action), {});
+      history.push(getActualPath(aliases, action), {});
       break;
     case REPLACE_STATE:
-      history.replace(getActualPath(action), {});
+      history.replace(getActualPath(aliases, action), {});
       break;
     case POP_STATE:
       history.goBack();
