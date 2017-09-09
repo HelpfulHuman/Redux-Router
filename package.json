@@ -1,6 +1,6 @@
 {
   "name": "@helpfulhuman/redux-router",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha",
   "description": "A routing solution for Redux applications.",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
