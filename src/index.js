@@ -1,4 +1,4 @@
-import Router from "./Router";
+import Router from "./router";
 import createReduxMiddleware from "./middleware";
 import { pushState, replaceState, popState } from "./actions";
 
