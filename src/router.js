@@ -1,5 +1,5 @@
 import pathToRegex from "path-to-regexp";
-import { defaultErrorHandler } from "./utils";
+import { defaultErrorHandler, shallowFlatten } from "./utils";
 import createReduxMiddleware from "./middleware";
 import { compose, onPathMatch, assertType } from "@helpfulhuman/router-kit";
 
@@ -35,8 +35,10 @@ export default class Router {
    * @return {Router}
    */
   use (path, ...middlewares) {
+    // perform a "shallow flattening" of nested arrays
+    middlewares = Array.prototype.concat.apply(middlewares);
     if (typeof path === "function") {
-      this.middleware = middleware.concat(path, middlewares);
+      this.middleware = this.middleware.concat(path, middlewares);
     } else {
       this.middleware.push(onPathMatch(path, compose(middlewares), false));
     }
