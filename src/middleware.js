@@ -33,8 +33,10 @@ export default function createReduxMiddleware (middleware, errorHandler, aliases
       });
     }
 
+    // subscribe to new route changes
     history.listen(processLocation);
 
+    // process the current route location
     processLocation(window.location);
 
     return next => action => {
