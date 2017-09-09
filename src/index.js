@@ -16,7 +16,7 @@ export {
   pushState,
   replaceState,
   popState,
-  pushState as push,
-  replaceState as redirect,
+  pushState as routeTo,
+  replaceState as redirectTo,
   popState as goBack,
 }
