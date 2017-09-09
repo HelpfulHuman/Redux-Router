@@ -11,6 +11,22 @@ export function defaultErrorHandler (err, ctx) {
 }
 
 /**
+ * Flatten a multidimensional array down to a single, flat array.
+ */
+export function flatten (arr) {
+  var out = [];
+  var _each = function (item) {
+    if (Array.isArray(item)) {
+      item.forEach(_each);
+    } else {
+      out.push(item);
+    }
+  }
+  _each(arr);
+  return out;
+}
+
+/**
  * Create a custom context object.
  *
  * @param  {Object} location
