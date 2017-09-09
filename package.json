@@ -1,5 +1,5 @@
 {
-  "name": "pure-redux-router",
+  "name": "@helpfulhuman/redux-router",
   "version": "1.0.0",
   "description": "A routing solution for Redux applications.",
   "main": "dist/index.js",

@@ -1,4 +1,4 @@
-export const NS = "$$ROUTE_";
+export const NS = "__ROUTER__";
 
 const PUSH_STATE = NS + "PUSH_STATE";
 const REPLACE_STATE = NS + "REPLACE_STATE";

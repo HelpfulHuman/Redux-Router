@@ -1,144 +1,97 @@
-import { isType, asyncSeries } from "./utils";
-import { replaceState } from "./actions";
+import { compose, onPathMatch, assertType } from "@helpfulhuman/route-kit";
+import { defaultErrorHandler } from "./utils";
+import createReduxMiddleware from "./middleware";
+import pathToRegex from "path-to-regexp";
 
-class Router {
+export default class Router {
 
   /**
    * Set up our router instance that will act as a factory for creating
    * and managing routing middleware.
    */
   constructor () {
-    this.middleware = [];
-    this.errorHandler = null;
+    this.middleware   = [];
+    this.aliases      = {};
+    this.errorHandler = defaultErrorHandler;
   }
 
   /**
-   * Handle errors on this router.  Catching errors for this route(r) means
-   * that they will not bubble up to any parent router(s).
+   * Creates an alias for a specific path.
+   *
+   * @param  {String} name
+   * @param  {String} path
+   * @return {Router}
+   */
+  alias (name, path) {
+    this.aliases[name] = pathToRegex.compile(path);
+    return this;
+  }
+
+  /**
+   * Add a new middleware or "partial" handler to the router.
+   *
+   * @param  {String|Function} path
+   * @param  {Function[]} ...middlewares
+   * @return {Router}
+   */
+  use (path, ...middlewares) {
+    if (typeof path === "function") {
+      this.middleware = middleware.concat(path, middlewares);
+    } else {
+      this.middleware.push(onPathMatch(path, compose(middlewares), false));
+    }
+    return this;
+  }
+
+  /**
+   * Add a new "exact match" handler to the router.
+   *
+   * @param  {String} path
+   * @param  {Function[]} ...middlewares
+   * @return {Router}
+   */
+  exact (path, ...middlewares) {
+    if (middlewares.length === 0) {
+      throw new Error("Bad argument: At least one middleware must be given to router.exact()");
+    }
+    middlewares = (middlewares.length > 1 ? compose(middlewares) : middlewares[0]);
+    this.middleware.push(onPathMatch(path, middlewares, true));
+    return this;
+  }
+
+  /**
+   * Tie an action creator directly to a router to be dispatched immediately.
+   *
+   * @param  {String} path
+   * @param  {Function} action
+   * @return {Router}
+   */
+  dispatch (path, action) {
+    this.middleware.push(exact(path, function (ctx) {
+      ctx.dispatch(action(ctx));
+    }));
+    return this;
+  }
+
+  /**
+   * Replace the default error handler with a custom one.
    *
    * @param  {Function} handler
-   * @return {this}
+   * @return {Router}
    */
   catch (handler) {
-    isType(handler, "function", "Handler");
+    assertType("handler", "function", handler);
     this.errorHandler = handler;
     return this;
   }
 
   /**
-   * Adds a new middleware function to the stack.
+   * Create and return a new Redux middleware for the router.
    *
-   * @param  {Function} middleware
-   * @return {this}
+   * @param {History} history
    */
-  use (middleware) {
-    isType(middleware, "function", "Middleware");
-    this.middleware.push(function (ctx, dispatch, next) {
-      try {
-        middleware(ctx, dispatch, next);
-      } catch (err) {
-        next(err);
-      }
-    });
-    return this;
-  }
-
-  /**
-   * Macro for automatically creating a new sub-router that only triggers if
-   * the location passing through it matches the given path pattern.  Otherwise,
-   * the sub router (and its middleware) will be skipped.
-   *
-   * @param  {String} path
-   * @return {Router}
-   */
-  when (path) {
-    isType(path, "string", "path");
-    // create a new router instance that will be returned
-    var router = new Router();
-    // generate custom middleware for invoking this router if the
-    // location's pathname matches the given path pattern
-    this.use(function (ctx, dispatch, next) {
-      if ( ! ctx.matchesPath(path)) next();
-      else router.process(ctx, dispatch, function (err) {
-        if (err) next(err);
-      });
-    });
-    // return our new sub router
-    return router;
-  }
-
-  /**
-   * Macro for creating middleware that will replace the current location
-   * state with the returned URI string.
-   *
-   * @param  {Function} predicate
-   * @return {this}
-   */
-  redirect (predicate) {
-    isType(predicate, "function", "predicate");
-    return this.use(function (ctx, dispatch, next) {
-      var url = predicate(ctx);
-      if ( ! url) next();
-      else dispatch(replaceState(url));
-    });
-  }
-
-  /**
-   * Macro for immediately invoking the dispatch with the result of the given
-   * action creator.
-   *
-   * @param  {Function} action
-   * @return {this}
-   */
-  dispatch (action) {
-    isType(action, "function", "Action");
-    return this.use(function (ctx, dispatch, next) {
-      dispatch(action(ctx));
-      next();
-    });
-  }
-
-  /**
-   * Merges the query and param objects together, plucks the specified
-   * keys from the new object and then passes them to the given action
-   * creator in the specified order.
-   *
-   * @param  {Function} action
-   * @param  {String[]} keys
-   * @return {this}
-   */
-  dispatchWith (action, keys) {
-    return this.use(function ({ query, params }, dispatch, next) {
-      var newParams = Object.assign({}, query, params);
-      var args = keys.map(k => newParams[k] || null);
-      dispatch(action.apply(null, args));
-      next();
-    });
-  }
-
-  /**
-   * Pass the context object and dispatch function to each middleware, then
-   * invoke the given callback when finished or when an error occurs if no
-   * error handler has been set on this router.
-   *
-   * @param  {Context} ctx
-   * @param  {Function} dispatch
-   * @param  {Function} callback
-   */
-  process (ctx, dispatch, callback) {
-    asyncSeries(
-      this.middleware,
-      (mw, next) => mw(ctx, dispatch, next),
-      (err) => {
-        if (err && this.errorHandler) {
-          this.errorHandler(err);
-        } else if (callback) {
-          callback(err);
-        }
-      }
-    );
+  middleware (history) {
+    return createReduxMiddleware(this.middleware, this.errorHandler, this.aliases, history);
   }
 
 }
-
-export default Router;
