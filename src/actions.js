@@ -15,43 +15,70 @@ export function isInternalAction ({ type }) {
 }
 
 /**
+ * Returns the actual path in the event that a route alias is given and
+ * not a URI.
+ *
+ * @param  {Object} aliases
+ * @param  {Object} action
+ * @return {String}
+ */
+export function getActualPath (aliases, { path, params }) {
+  var alias = aliases[path];
+  if (alias) {
+    return alias(params);
+  }
+  return path;
+}
+
+/**
  * Invokes the method on the given history object that matches the
  * action type.
  *
+ * @param  {Object} aliases
  * @param  {Object} action
  * @param  {History} History
  */
-export function invokeMatchingMethod (action, history) {
+export function invokeMatchingMethod (aliases, action, history) {
   switch (action.type) {
     case PUSH_STATE:
-      history.pushState(action.path, {});
+      history.push(getActualPath(action), {});
       break;
     case REPLACE_STATE:
-      history.replaceState(action.path, {});
+      history.replace(getActualPath(action), {});
       break;
     case POP_STATE:
-      history.popState(action.path, {});
+      history.goBack();
       break;
   }
 }
 
 /**
  * Trigger a push state in the router.
+ *
+ * @param  {String} path
+ * @param  {Object} params
+ * @return {Object}
  */
-export function pushState (path) {
-  return { type: PUSH_STATE, path };
+export function pushState (path, params = {}) {
+  return { type: PUSH_STATE, path, params };
 }
 
 /**
  * Trigger a replace state in the router.
+ *
+ * @param  {String} path
+ * @param  {Object} params
+ * @return {Object}
  */
-export function replaceState (path) {
-  return { type: REPLACE_STATE, path };
+export function replaceState (path, params = {}) {
+  return { type: REPLACE_STATE, path, params };
 }
 
 /**
  * Trigger a pop state in the router.
+ *
+ * @return {Object}
  */
 export function popState () {
-  return { type: POP_STATE, path };
+  return { type: POP_STATE };
 }

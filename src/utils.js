@@ -1,4 +1,4 @@
-import { assertType } from "@helpfulhuman/route-kit";
+import { assertType, createContext } from "@helpfulhuman/router-kit";
 
 /**
  * Default error handler for dealing with unhandled errors.
@@ -11,6 +11,19 @@ export function defaultErrorHandler (err, ctx) {
 }
 
 /**
+ * Create a custom context object.
+ *
+ * @param  {Object} location
+ * @param  {Object} state
+ * @param  {Function} dispatch
+ * @return {Object}
+ */
+export function createReduxContext (location, state, dispatch) {
+  var ctx = createContext(location);
+  return Object.assign(ctx, { state, dispatch });
+}
+
+/**
  * Throws an error if object shape is not that of a history object.
  *
  * @param  {Object} history
@@ -18,7 +31,7 @@ export function defaultErrorHandler (err, ctx) {
 export function assertHistoryType (history) {
   assertType("history", "object", history);
   assertType("history.listen", "function", history.listen);
-  assertType("history.pushState", "function", history.pushState);
-  assertType("history.replaceState", "function", history.replaceState);
-  assertType("history.popState", "function", history.popState);
+  assertType("history.push", "function", history.push);
+  assertType("history.replace", "function", history.replace);
+  assertType("history.goBack", "function", history.goBack);
 }

@@ -1,20 +1,6 @@
-import { assertHistoryType } from "./utils";
-import { createContext } from "@helpfulhuman/router-kit";
 import createHistory from "history/createBrowserHistory";
+import { assertHistoryType, createReduxContext } from "./utils";
 import { isInternalAction, invokeMatchingMethod, replaceState } from "./actions";
-
-/**
- * Create a custom context object.
- *
- * @param  {Object} location
- * @param  {Object} state
- * @param  {Function} dispatch
- * @return {Object}
- */
-function createReduxContext (location, state, dispatch) {
-  var ctx = createContext(location);
-  return Object.assign(ctx, { state, dispatch });
-}
 
 /**
  * Returns a new middleware function for Redux using the given parameters.
@@ -34,7 +20,7 @@ export default function createReduxMiddleware (middleware, errorHandler, aliases
   return function ({ getState, dispatch }) {
 
     const processLocation = function (location) {
-      var ctx = createCustomContext(location, getState(), dispatch);
+      var ctx = createReduxContext(location, getState(), dispatch);
       runMiddleware(router.middleware, function (err, redirect) {
         if (err) {
           router.errorHandler(err);
