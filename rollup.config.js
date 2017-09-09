@@ -8,7 +8,7 @@ export default {
     { file: 'dist/index.es.js', format: 'es' },
   ],
   external: [
-    "history",
+    "history/createBrowserHistory",
     "path-to-regexp",
   ],
   exports: "named",

@@ -1,6 +1,6 @@
 import createHistory from "history/createBrowserHistory";
 import { assertHistoryType, createReduxContext } from "./utils";
-import { isInternalAction, invokeRouteChange, replaceState } from "./actions";
+import { invokeRouteChange, replaceState } from "./actions";
 import { compose } from "@helpfulhuman/router-kit";
 
 /**
@@ -39,7 +39,7 @@ export default function createReduxMiddleware (middleware, errorHandler, aliases
     // process the current route location
     processLocation(window.location);
 
-    return next => action => {
+    return (next) => (action) => {
       invokeRouteChange(action, history);
       next(action);
     }
