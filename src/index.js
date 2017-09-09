@@ -11,8 +11,12 @@ export function createRouter () {
 }
 
 export {
+  Router,
   createReduxMiddleware,
   pushState,
   replaceState,
   popState,
+  pushState as push,
+  replaceState as redirect,
+  popState as goBack,
 }
