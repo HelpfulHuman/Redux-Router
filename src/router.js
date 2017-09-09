@@ -1,5 +1,5 @@
 import pathToRegex from "path-to-regexp";
-import { defaultErrorHandler, shallowFlatten } from "./utils";
+import { defaultErrorHandler } from "./utils";
 import createReduxMiddleware from "./middleware";
 import { compose, onPathMatch, assertType } from "@helpfulhuman/router-kit";
 
