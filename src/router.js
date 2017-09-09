@@ -90,7 +90,7 @@ export default class Router {
    *
    * @param {History} history
    */
-  middleware (history) {
+  connectStore (history) {
     return createReduxMiddleware(
       this.middleware,
       this.errorHandler,
