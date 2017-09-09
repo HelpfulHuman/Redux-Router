@@ -1,28 +1,49 @@
-import { noop } from "./utils";
-import { isInternalAction, invokeMatchingMethod } from "./actions";
-import Context from "./context";
+import { assertHistoryType } from "./utils";
+import { createContext } from "@helpfulhuman/route-kit";
 import createHistory from "history/createBrowserHistory";
+import { isInternalAction, invokeMatchingMethod, replaceState } from "./actions";
 
 /**
- * Returns a new middleware function for Redux using the given
- * parameters.
+ * Create a custom context object.
  *
- * @param  {Router} router
- * @param  {Object} history
+ * @param  {Object} location
+ * @param  {Object} state
+ * @param  {Function} dispatch
+ * @return {Object}
+ */
+function createReduxContext (location, state, dispatch) {
+  return Object.assign(createContext(location), { state, dispatch });
+}
+
+/**
+ * Returns a new middleware function for Redux using the given parameters.
+ *
+ * @param  {Function[]} router
+ * @param  {Function} errorHandler
+ * @param  {Object} aliases
+ * @param  {History} history
  * @return {Function}
  */
-export default function connectRouter (router, history) {
+export default function createReduxMiddleware (middleware, errorHandler, aliases, history) {
   // no history given? create one instead
   if ( ! history) history = createHistory();
-
+  // make sure we have a valid history object
+  assertHistoryType(history);
   // return the middleware function for redux
   return function ({ getState, dispatch }) {
+
     const processLocation = function (location) {
-      var ctx = new Context(location, getState());
-      router.process(ctx, dispatch);
+      var ctx = createCustomContext(location, getState(), dispatch);
+      runMiddleware(router.middleware, function (err, redirect) {
+        if (err) {
+          router.errorHandler(err);
+        } else if (redirect) {
+          dispatch(replaceState());
+        }
+      });
     }
 
-    history.listen(proccessLocation);
+    history.listen(processLocation);
 
     processLocation(window.location);
 
