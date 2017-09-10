@@ -63,14 +63,15 @@ export default class Router {
    * Tie an action creator directly to a router to be dispatched immediately.
    *
    * @param  {String} path
+   * @param  {Function[]} ...middleware
    * @param  {Function} action
    * @return {Router}
    */
-  dispatch (path, action) {
-    return this.exact(path, function (ctx, next) {
-      ctx.dispatch(action(ctx));
+  dispatch (path, ...middleware, action) {
+    return this.exact(path, middleware.concat(function (ctx, next) {
+      ctx.dispatch(typeof action === "function" ? action(ctx) : action);
       next();
-    });
+    }));
   }
 
   /**
