@@ -9,8 +9,9 @@ export default {
   ],
   external: [
     "arr-flatten",
-    "history/createBrowserHistory",
     "path-to-regexp",
+    "@helpfulhuman/router-kit",
+    "history/createBrowserHistory",
   ],
   exports: "named",
   plugins: [
