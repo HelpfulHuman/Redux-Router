@@ -1,4 +1,4 @@
-import Router from "./router";
+import ReduxRouter from "./router";
 import createReduxMiddleware from "./middleware";
 import { pushState, replaceState, popState } from "./actions";
 
@@ -7,11 +7,11 @@ import { pushState, replaceState, popState } from "./actions";
  * that can be added to a Redux store as middleware.
  */
 export function createRouter () {
-  return new Router();
+  return new ReduxRouter();
 }
 
 export {
-  Router,
+  ReduxRouter,
   createReduxMiddleware,
   pushState,
   replaceState,

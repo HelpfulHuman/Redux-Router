@@ -1,40 +1,23 @@
-export const NS = "__ROUTER__";
-
-const PUSH_STATE = NS + "PUSH_STATE";
-const REPLACE_STATE = NS + "REPLACE_STATE";
-const POP_STATE = NS + "POP_STATE";
-
-/**
- * Returns the actual path in the event that a route alias is given and
- * not a URI.
- *
- * @param  {Object} aliases
- * @param  {Object} action
- * @return {String}
- */
-export function getActualPath (aliases, { path, params }) {
-  var alias = aliases[path];
-  if (alias) {
-    return alias(params);
-  }
-  return path;
-}
+const NS            = "__ROUTER__";
+const PUSH_STATE    = (NS + "PUSH_STATE");
+const REPLACE_STATE = (NS + "REPLACE_STATE");
+const POP_STATE     = (NS + "POP_STATE");
 
 /**
  * Invokes the method on the given history object that matches the
  * action type.
  *
- * @param  {Object} aliases
+ * @param  {ReduxRouter} router
  * @param  {Object} action
- * @param  {History} History
+ * @param  {History} history
  */
-export function invokeRouteChange (aliases, action, history) {
+export function invokeRouteChange (router, { path, params }, history) {
   switch (action.type) {
     case PUSH_STATE:
-      history.push(getActualPath(aliases, action), {});
+      history.push(router.buildUri(path, params), {});
       break;
     case REPLACE_STATE:
-      history.replace(getActualPath(aliases, action), {});
+      history.replace(router.buildUri(path, params), {});
       break;
     case POP_STATE:
       history.goBack();

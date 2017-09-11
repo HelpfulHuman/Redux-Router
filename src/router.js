@@ -1,63 +1,7 @@
-import flatten from "arr-flatten";
-import pathToRegex from "path-to-regexp";
-import { defaultErrorHandler } from "./utils";
 import createReduxMiddleware from "./middleware";
-import { compose, onPathMatch, assertType } from "@helpfulhuman/router-kit";
+import { Router } from "@helpfulhuman/router-kit";
 
-export default class Router {
-
-  /**
-   * Set up our router instance that will act as a factory for creating
-   * and managing routing middleware.
-   */
-  constructor () {
-    this.middleware   = [];
-    this.aliases      = {};
-    this.errorHandler = defaultErrorHandler;
-  }
-
-  /**
-   * Creates an alias for a specific path.
-   *
-   * @param  {String} name
-   * @param  {String} path
-   * @return {Router}
-   */
-  alias (name, path) {
-    this.aliases[name] = pathToRegex.compile(path);
-    return this;
-  }
-
-  /**
-   * Add a new middleware or "partial" handler to the router.
-   *
-   * @param  {String|Function} path
-   * @param  {Function[]} ...middlewares
-   * @return {Router}
-   */
-  use (path, ...middlewares) {
-    if (typeof path === "function") {
-      this.middleware = flatten([this.middleware, path, middlewares]);
-    } else {
-      this.middleware.push(onPathMatch(path, compose(middlewares), false));
-    }
-    return this;
-  }
-
-  /**
-   * Add a new "exact match" handler to the router.
-   *
-   * @param  {String} path
-   * @param  {Function[]} ...middlewares
-   * @return {Router}
-   */
-  exact (path, ...middlewares) {
-    if (middlewares.length === 0) {
-      throw new Error("Bad argument: At least one middleware must be given to router.exact()");
-    }
-    this.middleware.push(onPathMatch(path, compose(middlewares), true));
-    return this;
-  }
+export default class ReduxRouter extends Router {
 
   /**
    * Tie an action creator directly to a router to be dispatched immediately.
@@ -80,23 +24,21 @@ export default class Router {
    * @return {Router}
    */
   catch (handler) {
-    assertType("handler", "function", handler);
-    this.errorHandler = handler;
+    if (typeof handler !== "function") {
+      throw new Error("Bad argument: Error handler must be a function!");
+    }
+    this.onerror = handler;
     return this;
   }
 
   /**
    * Create and return a new Redux middleware for the router.
    *
-   * @param {History} history
+   * @param  {History} history
+   * @return {Function}
    */
   connectStore (history) {
-    return createReduxMiddleware(
-      this.middleware,
-      this.errorHandler,
-      this.aliases,
-      history
-    );
+    return createReduxMiddleware(this, history);
   }
 
 }
