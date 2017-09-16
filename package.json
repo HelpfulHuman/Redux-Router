@@ -44,7 +44,7 @@
     "sinon-chai": "^2.13.0"
   },
   "dependencies": {
-    "@helpfulhuman/router-kit": "^1.1.0",
+    "@helpfulhuman/router-kit": "^1.1.2",
     "arr-flatten": "^1.1.0",
     "history": "^4.5.1",
     "path-to-regexp": "^2.0.0"
