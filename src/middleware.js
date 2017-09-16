@@ -13,7 +13,10 @@ export default function createReduxMiddleware (router, history) {
   // no history given? create one instead
   if ( ! history) history = createHistory();
   // return the middleware function for redux
-  return function ({ getState, dispatch }) {
+  return function (store) {
+    // Hard bind the getState() and dispatch() methods
+    const getState = store.getState.bind(store);
+    const dispatch = store.dispatch.bind(store);
 
     // create a result handler for errors and redirects
     const handleResult = function (err, redirect) {
@@ -26,7 +29,8 @@ export default function createReduxMiddleware (router, history) {
 
     // connect our router to history with a custom handler
     connectHistory(router, history, function (context, run) {
-      context = Object.assign(context, { state: getState, dispatch });
+      const state = getState();
+      context = Object.assign(context, { state, getState, dispatch });
       run(context, handleResult);
     });
 
