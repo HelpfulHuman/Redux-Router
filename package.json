@@ -1,6 +1,6 @@
 {
   "name": "@helpfulhuman/redux-router",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "A routing solution for Redux applications.",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -44,7 +44,7 @@
     "sinon-chai": "^2.13.0"
   },
   "dependencies": {
-    "@helpfulhuman/router-kit": "^1.1.0",
+    "@helpfulhuman/router-kit": "^1.1.3",
     "arr-flatten": "^1.1.0",
     "history": "^4.5.1",
     "path-to-regexp": "^2.0.0"

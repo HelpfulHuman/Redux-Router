@@ -11,13 +11,13 @@ const POP_STATE     = (NS + "POP_STATE");
  * @param  {Object} action
  * @param  {History} history
  */
-export function invokeRouteChange (router, { path, params }, history) {
+export function invokeRouteChange (router, action, history) {
   switch (action.type) {
     case PUSH_STATE:
-      history.push(router.buildUri(path, params), {});
+      history.push(router.buildUri(action.path, action.params), {});
       break;
     case REPLACE_STATE:
-      history.replace(router.buildUri(path, params), {});
+      history.replace(router.buildUri(action.path, action.params), {});
       break;
     case POP_STATE:
       history.goBack();
